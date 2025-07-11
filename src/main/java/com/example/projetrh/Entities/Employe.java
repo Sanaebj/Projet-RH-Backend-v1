@@ -1,4 +1,28 @@
 package com.example.projetrh.Entities;
 
-public class Employe {
+import com.example.projetrh.Enums.StatutEmploye;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@Entity
+@Data
+public class Employe extends Utilisateur {
+
+    private String matricule;
+    private String service;
+    private String poste;
+    private BigDecimal salaire;
+
+    @Enumerated(EnumType.STRING)
+    private StatutEmploye statut;
+
+    @OneToMany(mappedBy = "employe")
+    private List<Conge> conges;
+
+    @OneToMany(mappedBy = "employe")
+    private List<Document> documents;
 }
+

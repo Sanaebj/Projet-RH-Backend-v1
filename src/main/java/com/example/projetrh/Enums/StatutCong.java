@@ -1,4 +1,5 @@
 package com.example.projetrh.Enums;
 
-public enum StatutCong {
+public enum StatutConge {
+    EN_ATTENTE, APPROUVE, REFUSE
 }
