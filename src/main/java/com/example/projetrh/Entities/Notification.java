@@ -22,5 +22,5 @@ public class Notification {
     private boolean lue;
 
     @ManyToOne
-    private Utilisateur utilisateur;
+    private Employe utilisateur;
 }
