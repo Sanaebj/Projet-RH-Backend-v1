@@ -1,6 +1,7 @@
 package com.example.projetrh.Entities;
 
-import com.example.rh.enums.StatutParticipation;
+
+import com.example.projetrh.Enums.StatutParticipation;
 import jakarta.persistence.*;
 import lombok.*;
 

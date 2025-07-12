@@ -1,8 +1,7 @@
 package com.example.projetrh.Entities;
 
 
-
-import com.example.rh.enums.TypeDocument;
+import com.example.projetrh.Enums.TypeDocument;
 import jakarta.persistence.*;
 import lombok.*;
 
