@@ -1,6 +1,7 @@
 package com.example.projetrh.Entities;
 
 import com.example.projetrh.Enums.StatutEmploye;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class Employe extends Utilisateur {
     private StatutEmploye statut;
 
     @OneToMany(mappedBy = "employe")
+    @JsonIgnore // pour éviter la boucle infinie du resultat
     private List<Conge> conges;
 
     @OneToMany(mappedBy = "employe")
