@@ -22,11 +22,7 @@ public class Notification {
     private boolean lue;
 
     @ManyToOne
-<<<<<<< HEAD
     @JoinColumn(name = "employe_id")
     private Employe utilisateur;
 
-=======
-    private Employe utilisateur;
->>>>>>> 178a582151b7b7a9aca997d1b40d9a469d06738d
 }
