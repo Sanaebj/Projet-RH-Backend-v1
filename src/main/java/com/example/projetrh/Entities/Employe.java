@@ -1,11 +1,13 @@
 package com.example.projetrh.Entities;
 
+import com.example.projetrh.Enums.Genre;
 import com.example.projetrh.Enums.StatutEmploye;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -18,13 +20,26 @@ public class Employe extends Utilisateur {
     private BigDecimal salaire;
 
     @Enumerated(EnumType.STRING)
+    private Genre genre;
+
+    @Enumerated(EnumType.STRING)
     private StatutEmploye statut;
+
 
     @OneToMany(mappedBy = "employe")
     @JsonIgnore // pour éviter la boucle infinie du resultat
     private List<Conge> conges;
 
-    @OneToMany(mappedBy = "employe")
+    @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Document> documents;
+
+    @PrePersist
+    public void onCreate() {
+        this.dateCreation = LocalDate.now();
+    }
+
+    @Column(updatable = false)
+    private LocalDate dateCreation;
+
 }
 

@@ -41,5 +41,13 @@ public class DocumentController {
     public void delete(@PathVariable Integer id) {
         documentService.delete(id);
     }
+
+
+    @PostMapping("/demande-attestation/{employeId}")
+    public Document demandeAttestation(@PathVariable Integer employeId, @RequestBody(required = false) String message) {
+        // message facultatif, peut être null ou un petit texte que l’employé envoie à l’admin
+        return documentService.genererAttestationTravailAvecPDF(employeId);
+    }
+
 }
 

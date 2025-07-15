@@ -2,6 +2,7 @@ package com.example.projetrh.Entities;
 
 
 import com.example.projetrh.Enums.TypeDocument;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,5 +24,6 @@ public class Document {
     private Boolean estPublic;
 
     @ManyToOne
+    @JsonIgnore
     private Employe employe;
 }
