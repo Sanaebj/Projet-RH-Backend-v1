@@ -40,5 +40,28 @@ public class CongeController {
     public void delete(@PathVariable Integer id) {
         congeService.delete(id);
     }
+
+    @PostMapping("/demander/{employeId}")
+    public Conge demanderConge(@PathVariable Integer employeId, @RequestBody Conge conge) {
+        return congeService.demanderConge(employeId, conge);
+    }
+
+
+    @PutMapping("/approuver/{congeId}")
+    public Conge approuverConge(@PathVariable Integer congeId) {
+        return congeService.approuverConge(congeId);
+    }
+
+
+    @PutMapping("/refuser/{congeId}")
+    public Conge refuserConge(@PathVariable Integer congeId) {
+        return congeService.refuserConge(congeId);
+    }
+
+
+    @GetMapping("/en-attente")
+    public List<Conge> getCongesEnAttente() {
+        return congeService.listerCongesEnAttente();
+    }
 }
 

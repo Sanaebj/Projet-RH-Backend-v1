@@ -1,8 +1,9 @@
 package com.example.projetrh.Controllers;
 
-
+import com.example.projetrh.Dtos.ReunionRequestDTO;
 import com.example.projetrh.Entities.Reunion;
 import com.example.projetrh.Services.ReunionService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class ReunionController {
     }
 
     @PostMapping
-    public Reunion create(@RequestBody Reunion reunion) {
-        return reunionService.save(reunion);
+    public Reunion createReunion(@Valid @RequestBody ReunionRequestDTO dto) {
+        return reunionService.createReunionWithParticipants(dto);
     }
 
     @GetMapping
@@ -37,4 +38,3 @@ public class ReunionController {
         reunionService.delete(id);
     }
 }
-

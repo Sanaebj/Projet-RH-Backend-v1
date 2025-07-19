@@ -2,6 +2,7 @@ package com.example.projetrh.Entities;
 
 
 import com.example.projetrh.Enums.StatutParticipation;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +18,9 @@ public class ParticipationReunion {
     private StatutParticipation statut;
 
     @ManyToOne
+    @JsonBackReference
     private Reunion reunion;
+
 
     @ManyToOne
     private Employe employe;

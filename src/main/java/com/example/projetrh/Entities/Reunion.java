@@ -1,5 +1,6 @@
 package com.example.projetrh.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,8 +18,9 @@ public class Reunion {
     private LocalDateTime dateHeure;
     private String lieu;
     private String description;
-    private String lienVirtuel;
 
-    @OneToMany(mappedBy = "reunion")
+
+    @OneToMany(mappedBy = "reunion", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<ParticipationReunion> participations;
 }
