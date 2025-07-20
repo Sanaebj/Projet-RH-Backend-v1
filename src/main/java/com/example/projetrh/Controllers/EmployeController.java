@@ -36,7 +36,6 @@ public class EmployeController {
             @RequestParam String telephone,
             @RequestParam String adresse,
             @RequestParam String dateEmbauche,
-            @RequestParam String motDePasseHash,
             @RequestParam String poste,
             @RequestParam String service,
             @RequestParam String salaire,
@@ -49,7 +48,6 @@ public class EmployeController {
             employe.setEmail(email);
             employe.setTelephone(telephone);
             employe.setAdresse(adresse);
-            employe.setMotDePasseHash(motDePasseHash);
             employe.setDateEmbauche(LocalDate.parse(dateEmbauche));
             employe.setPoste(poste);
             employe.setService(service);

@@ -19,6 +19,10 @@ public abstract class Utilisateur {
     private String adresse;
     private String photo;
     private LocalDate dateEmbauche;
-    private String motDePasseHash;
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
 }
 
