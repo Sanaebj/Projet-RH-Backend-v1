@@ -76,4 +76,8 @@ public class EmployeService {
         }
         return sb.toString();
     }
+    public long countAllEmployes() {
+        return employeRepository.count();
+    }
+
 }

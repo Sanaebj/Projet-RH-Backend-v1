@@ -114,4 +114,11 @@ public class EmployeController {
             return ResponseEntity.internalServerError().body("Erreur lors de la suppression de l'employé");
         }
     }
+    @GetMapping("/count")
+    public ResponseEntity<Long> countEmployes() {
+        long count = employeService.countAllEmployes();
+        return ResponseEntity.ok(count);
+    }
+
+
 }
