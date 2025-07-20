@@ -31,9 +31,6 @@ public class Employe extends Utilisateur {
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
-    @Enumerated(EnumType.STRING)
-    private StatutEmploye statut;
-
 
     @OneToMany(mappedBy = "employe")
     @JsonIgnore // pour éviter la boucle infinie du resultat
