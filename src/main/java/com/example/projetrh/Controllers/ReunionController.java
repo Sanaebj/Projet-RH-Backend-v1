@@ -2,10 +2,12 @@ package com.example.projetrh.Controllers;
 
 import com.example.projetrh.Dtos.ReunionRequestDTO;
 import com.example.projetrh.Entities.Reunion;
+import com.example.projetrh.Repositories.ReunionRepository;
 import com.example.projetrh.Services.ReunionService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -13,10 +15,15 @@ import java.util.List;
 public class ReunionController {
 
     private final ReunionService reunionService;
+    private final ReunionRepository reunionRepository;
 
-    public ReunionController(ReunionService reunionService) {
+
+
+    public ReunionController(ReunionService reunionService, ReunionRepository reunionRepository) {
         this.reunionService = reunionService;
+        this.reunionRepository = reunionRepository;
     }
+
 
     @PostMapping
     public Reunion createReunion(@Valid @RequestBody ReunionRequestDTO dto) {
@@ -37,4 +44,10 @@ public class ReunionController {
     public void delete(@PathVariable Integer id) {
         reunionService.delete(id);
     }
+    @GetMapping("/upcoming")
+    public List<Reunion> getUpcomingReunions() {
+        LocalDateTime now = LocalDateTime.now();
+        return reunionRepository.findByDateHeureAfterOrderByDateHeureAsc(now);
+    }
+
 }
