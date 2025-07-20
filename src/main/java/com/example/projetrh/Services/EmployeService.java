@@ -17,8 +17,16 @@ public class EmployeService {
     }
 
     public Employe save(Employe employe) {
+        if (employe.getMatricule() == null || employe.getMatricule().isEmpty()) {
+            long count = employeRepository.count();
+
+            String matricule = "EMP" + String.format("%03d", count + 1);
+            employe.setMatricule(matricule);
+        }
+
         return employeRepository.save(employe);
     }
+
 
     public List<Employe> findAll() {
         return employeRepository.findAll();

@@ -63,7 +63,7 @@ public class DocumentService {
         if (employe.getGenre() != null) {
             switch (employe.getGenre()) {
                 case HOMME:
-                    civilite = "Monsieur";
+                      civilite = "Monsieur";
                     suffixeInteressee = "";
                     break;
                 case FEMME:
