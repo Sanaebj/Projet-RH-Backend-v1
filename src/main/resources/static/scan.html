@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pointage</title>
+  <meta charset="UTF-8">
+</head>
+<body>
+<h2>⏳ Enregistrement du pointage...</h2>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const employeId = params.get("employeId");
+
+  fetch(`http://${window.location.hostname}:2233/api/pointage/scan?employeId=${employeId}`, {
+    method: 'POST'
+  })
+          .then(res => res.text())
+          .then(data => {
+            document.body.innerHTML = `<h2 style="color:green;">${data}</h2>`;
+          })
+          .catch(err => {
+            document.body.innerHTML = `<h2 style="color:red;">❌ Erreur : ${err}</h2>`;
+          });
+</script>
+</body>
+</html>

@@ -16,11 +16,12 @@ public class Pointage {
     @ManyToOne
     private Employe employe;
 
-    private LocalTime heure;
+    private LocalDate date;
 
-    private String type; // "entrée" ou "sortie"
+    private LocalTime heureEntree;
+    private LocalTime heureSortie;
 
-    private LocalDate date = LocalDate.now();
+    private boolean enRetard;
 
 
 }
