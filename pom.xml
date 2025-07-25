@@ -97,6 +97,19 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
 
+        <!-- ZXing core -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.5.3</version>
+        </dependency>
+
+        <!-- ZXing javase (reste en 3.4.1) -->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.4.1</version>
+        </dependency>
 
     </dependencies>
 
