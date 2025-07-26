@@ -42,7 +42,12 @@ public class PointageController {
                 default -> ResponseEntity.status(500).body("❌ Erreur inconnue");
             };
         } else if (result instanceof PointageResponseDTO dto) {
-            String msg = String.format("✅ %s a %s à %s", dto.getNomComplet(), dto.getType(), dto.getHeure());
+            String msg = String.format("""
+        ✅ Pointage effectué avec succès !
+        Nom complet : %s
+        Type de pointage : %s
+        Heure : %s
+        """, dto.getNomComplet(), dto.getType(), dto.getHeure());
             return ResponseEntity.ok(msg);
         } else {
             return ResponseEntity.status(500).body("❌ Format inattendu");
