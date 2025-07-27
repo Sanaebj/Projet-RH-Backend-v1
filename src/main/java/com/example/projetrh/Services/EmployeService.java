@@ -2,10 +2,8 @@ package com.example.projetrh.Services;
 
 import com.example.projetrh.Entities.Employe;
 import com.example.projetrh.Repositories.EmployeRepository;
-import com.example.projetrh.utils.QRCodeGenerator;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -28,42 +26,34 @@ public class EmployeService {
             employe.setMatricule(matricule);
         }
 
-        // Générer le username
+        // Générer le username au format demandé
         String username = employe.getPrenom().substring(0, 1).toLowerCase()
                 + "." + employe.getNom().toLowerCase() + "@apprh.ma";
 
-        // Générer un mot de passe aléatoire
         String password = generateRandomPassword(10);
+
+        // Stocker dans l'entité
         employe.setUsername(username);
-        employe.setPassword(password); // 🔐 À hasher dans une vraie app !
+        employe.setPassword(password); // à sécuriser avec hash plus tard
 
-        // Enregistrement en base (pour avoir l'ID)
-        Employe saved = employeRepository.save(employe);
+        // Corps de l'email
+        String subject = "Vos identifiants de connexion";
+        String body = "<html><body>"
+                + "<p>Bonjour " + employe.getPrenom() + ",</p>"
+                + "<p>Voici vos identifiants de connexion :</p>"
+                + "<ul>"
+                + "<li><b>Nom d'utilisateur :</b> " + username + "</li>"
+                + "<li><b>Mot de passe :</b> " + password + "</li>"
+                + "</ul>"
+                + "<p>Merci de vous connecter à la plateforme.</p>"
+                + "<br><p style='font-size:small;color:gray;'>Ceci est un message automatique, merci de ne pas répondre.</p>"
+                + "</body></html>";
 
-        try {
-            // Lien encodé dans le QR code (ex : pour pointage)
-            String qrLink = "http://192.168.1.7:2233/scan.html?employeId=" + saved.getId();
+        emailService.sendEmail(employe.getEmail(), subject, body);
 
-            // Générer le QR code en image (byte array)
-            byte[] qrImageBytes = QRCodeGenerator.generateQRCodeImageAsBytes(qrLink);
-
-            // Envoi de l'e-mail avec QR intégré
-            emailService.sendEmailWithQr(
-                    saved.getEmail(),
-                    "Vos identifiants de connexion + QR Code de pointage",
-                    employe.getPrenom(),
-                    username,
-                    password,
-                    qrImageBytes
-            );
-
-        } catch (Exception e) {
-            System.err.println("❌ Erreur lors de l'envoi de l'e-mail : " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return saved;
+        return employeRepository.save(employe);
     }
+
 
     public List<Employe> findAll() {
         return employeRepository.findAll();
@@ -77,10 +67,6 @@ public class EmployeService {
         employeRepository.deleteById(id);
     }
 
-    public long countAllEmployes() {
-        return employeRepository.count();
-    }
-
     private String generateRandomPassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random rand = new Random();
@@ -90,4 +76,8 @@ public class EmployeService {
         }
         return sb.toString();
     }
+    public long countAllEmployes() {
+        return employeRepository.count();
+    }
+
 }
