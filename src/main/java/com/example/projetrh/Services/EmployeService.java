@@ -2,6 +2,7 @@ package com.example.projetrh.Services;
 
 import com.example.projetrh.Entities.Employe;
 import com.example.projetrh.Repositories.EmployeRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,31 +13,35 @@ public class EmployeService {
 
     private final EmployeRepository employeRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeService(EmployeRepository employeRepository, EmailService emailService) {
+    public EmployeService(EmployeRepository employeRepository, EmailService emailService,
+                          PasswordEncoder passwordEncoder) {
         this.employeRepository = employeRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Employe save(Employe employe) {
-        // Générer un matricule s’il n’existe pas
+        // Générer matricule si nécessaire
         if (employe.getMatricule() == null || employe.getMatricule().isEmpty()) {
             long count = employeRepository.count();
             String matricule = "EMP" + String.format("%03d", count + 1);
             employe.setMatricule(matricule);
         }
 
-        // Générer le username au format demandé
+        // Générer username
         String username = employe.getPrenom().substring(0, 1).toLowerCase()
                 + "." + employe.getNom().toLowerCase() + "@apprh.ma";
+        employe.setUsername(username);
 
+        // Générer mot de passe clair
         String password = generateRandomPassword(10);
 
-        // Stocker dans l'entité
-        employe.setUsername(username);
-        employe.setPassword(password); // à sécuriser avec hash plus tard
+        // Encoder avant stockage
+        employe.setPassword(passwordEncoder.encode(password));
 
-        // Corps de l'email
+        // Email avec mot de passe clair
         String subject = "Vos identifiants de connexion";
         String body = "<html><body>"
                 + "<p>Bonjour " + employe.getPrenom() + ",</p>"
@@ -51,9 +56,9 @@ public class EmployeService {
 
         emailService.sendEmail(employe.getEmail(), subject, body);
 
+        // Sauvegarde
         return employeRepository.save(employe);
     }
-
 
     public List<Employe> findAll() {
         return employeRepository.findAll();
@@ -67,6 +72,10 @@ public class EmployeService {
         employeRepository.deleteById(id);
     }
 
+    public long countAllEmployes() {
+        return employeRepository.count();
+    }
+
     private String generateRandomPassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random rand = new Random();
@@ -76,8 +85,4 @@ public class EmployeService {
         }
         return sb.toString();
     }
-    public long countAllEmployes() {
-        return employeRepository.count();
-    }
-
 }
