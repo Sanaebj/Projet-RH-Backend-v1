@@ -13,14 +13,13 @@ public class EmployeService {
 
     private final EmployeRepository employeRepository;
     private final EmailService emailService;
-    private final PasswordEncoder passwordEncoder;  // ajoute ce champ
+    private final PasswordEncoder passwordEncoder;
 
     public EmployeService(EmployeRepository employeRepository, EmailService emailService,
                           PasswordEncoder passwordEncoder) {
         this.employeRepository = employeRepository;
         this.emailService = emailService;
         this.passwordEncoder = passwordEncoder;
-
     }
 
     public Employe save(Employe employe) {
@@ -39,17 +38,17 @@ public class EmployeService {
         // Générer mot de passe clair
         String password = generateRandomPassword(10);
 
-        // **Encoder le mot de passe avant de le stocker**
+        // Encoder avant stockage
         employe.setPassword(passwordEncoder.encode(password));
 
-        // Envoyer email avec mot de passe clair (pas le hash)
+        // Email avec mot de passe clair
         String subject = "Vos identifiants de connexion";
         String body = "<html><body>"
                 + "<p>Bonjour " + employe.getPrenom() + ",</p>"
                 + "<p>Voici vos identifiants de connexion :</p>"
                 + "<ul>"
                 + "<li><b>Nom d'utilisateur :</b> " + username + "</li>"
-                + "<li><b>Mot de passe :</b> " + password + "</li>"  // clair pour l'email
+                + "<li><b>Mot de passe :</b> " + password + "</li>"
                 + "</ul>"
                 + "<p>Merci de vous connecter à la plateforme.</p>"
                 + "<br><p style='font-size:small;color:gray;'>Ceci est un message automatique, merci de ne pas répondre.</p>"
@@ -57,7 +56,7 @@ public class EmployeService {
 
         emailService.sendEmail(employe.getEmail(), subject, body);
 
-        // Sauvegarder dans la base avec mot de passe hashé
+        // Sauvegarde
         return employeRepository.save(employe);
     }
 
@@ -73,6 +72,10 @@ public class EmployeService {
         employeRepository.deleteById(id);
     }
 
+    public long countAllEmployes() {
+        return employeRepository.count();
+    }
+
     private String generateRandomPassword(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random rand = new Random();
@@ -82,8 +85,4 @@ public class EmployeService {
         }
         return sb.toString();
     }
-    public long countAllEmployes() {
-        return employeRepository.count();
-    }
-
 }
