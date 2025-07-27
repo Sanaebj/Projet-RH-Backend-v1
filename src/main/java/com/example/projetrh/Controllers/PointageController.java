@@ -42,17 +42,29 @@ public class PointageController {
                 default -> ResponseEntity.status(500).body("❌ Erreur inconnue");
             };
         } else if (result instanceof PointageResponseDTO dto) {
+            // === Ajout du message dynamique ici ===
+            LocalTime heurePointage = LocalTime.parse(dto.getHeure()); // format HH:mm:ss
+            LocalTime heureLimite = LocalTime.of(9, 10);
+
+            String retardMsg = "";
+            if (heurePointage.isAfter(heureLimite)) {
+                long minutesRetard = Duration.between(heureLimite, heurePointage).toMinutes();
+                retardMsg = String.format("\n⏰ Vous avez %d minute%s de retard.", minutesRetard, minutesRetard > 1 ? "s" : "");
+            }
+
             String msg = String.format("""
         ✅ Pointage effectué avec succès !
         Nom complet : %s
         Type de pointage : %s
-        Heure : %s
-        """, dto.getNomComplet(), dto.getType(), dto.getHeure());
+        Heure : %s%s
+        """, dto.getNomComplet(), dto.getType(), dto.getHeure(), retardMsg);
+
             return ResponseEntity.ok(msg);
         } else {
             return ResponseEntity.status(500).body("❌ Format inattendu");
         }
     }
+
     @GetMapping("/jour")
     public ResponseEntity<List<PointageJourDTO>> getPointageDuJour() {
         LocalDate today = LocalDate.now();
@@ -70,9 +82,13 @@ public class PointageController {
             if (p.getHeureEntree() == null) {
                 retard = "--";
             } else {
-                LocalTime heureReference = LocalTime.of(9, 0); // heure normale
-                if (p.getHeureEntree().isAfter(heureReference)) {
-                    long totalMinutes = Duration.between(heureReference, p.getHeureEntree()).toMinutes();
+                LocalTime heureReference = LocalTime.of(9, 0);
+                LocalTime seuilRetard = heureReference.plusMinutes(10);
+
+                if (p.getHeureEntree().isBefore(seuilRetard)) {
+                    retard = "✅ À l’heure";
+                } else {
+                    long totalMinutes = Duration.between(seuilRetard, p.getHeureEntree()).toMinutes();
                     long heures = totalMinutes / 60;
                     long minutesRestantes = totalMinutes % 60;
 
@@ -81,8 +97,6 @@ public class PointageController {
                     } else {
                         retard = String.format("🔴 %dmin", minutesRestantes);
                     }
-                } else {
-                    retard = "✅ À l’heure";
                 }
             }
 
@@ -91,6 +105,7 @@ public class PointageController {
 
         return ResponseEntity.ok(result);
     }
+
 
 
 
