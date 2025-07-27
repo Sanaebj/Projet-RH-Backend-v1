@@ -28,56 +28,11 @@ public class EmployeController {
         this.employeService = employeService;
     }
 
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<?> createEmployee(
-            @RequestParam String nom,
-            @RequestParam String prenom,
-            @RequestParam String email,
-            @RequestParam String telephone,
-            @RequestParam String adresse,
-            @RequestParam String dateEmbauche,
-            @RequestParam String poste,
-            @RequestParam String service,
-            @RequestParam String salaire,
-            @RequestParam(required = false) MultipartFile photo) {
-
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<?> createEmployee(@RequestBody Employe employe) {
         try {
-            Employe employe = new Employe();
-            employe.setNom(nom);
-            employe.setPrenom(prenom);
-            employe.setEmail(email);
-            employe.setTelephone(telephone);
-            employe.setAdresse(adresse);
-            employe.setDateEmbauche(LocalDate.parse(dateEmbauche));
-            employe.setPoste(poste);
-            employe.setService(service);
-
-            // Conversion du salaire
-            try {
-                employe.setSalaire(new BigDecimal(salaire));
-            } catch (NumberFormatException e) {
-                return ResponseEntity.badRequest().body("Format de salaire invalide");
-            }
-
-            // Gestion du fichier
-            if (photo != null && !photo.isEmpty()) {
-                String fileName = System.currentTimeMillis() + "_" + photo.getOriginalFilename();
-                Path uploadPath = Paths.get(uploadDir);
-
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-
-                Path filePath = uploadPath.resolve(fileName);
-                photo.transferTo(filePath.toFile());
-                employe.setPhoto(filePath.toString());
-            }
-
             Employe savedEmploye = employeService.save(employe);
             return ResponseEntity.ok(savedEmploye);
-
-        } catch (IOException e) {
-            return ResponseEntity.internalServerError().body("Erreur de traitement de fichier");
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Erreur serveur: " + e.getMessage());
         }
