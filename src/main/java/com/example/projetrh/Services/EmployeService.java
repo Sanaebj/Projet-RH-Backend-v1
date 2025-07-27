@@ -2,10 +2,9 @@ package com.example.projetrh.Services;
 
 import com.example.projetrh.Entities.Employe;
 import com.example.projetrh.Repositories.EmployeRepository;
-import com.example.projetrh.utils.QRCodeGenerator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -14,55 +13,51 @@ public class EmployeService {
 
     private final EmployeRepository employeRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeService(EmployeRepository employeRepository, EmailService emailService) {
+    public EmployeService(EmployeRepository employeRepository, EmailService emailService,
+                          PasswordEncoder passwordEncoder) {
         this.employeRepository = employeRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Employe save(Employe employe) {
-        // Générer un matricule s’il n’existe pas
+        // Générer matricule si nécessaire
         if (employe.getMatricule() == null || employe.getMatricule().isEmpty()) {
             long count = employeRepository.count();
             String matricule = "EMP" + String.format("%03d", count + 1);
             employe.setMatricule(matricule);
         }
 
-        // Générer le username
+        // Générer username
         String username = employe.getPrenom().substring(0, 1).toLowerCase()
                 + "." + employe.getNom().toLowerCase() + "@apprh.ma";
-
-        // Générer un mot de passe aléatoire
-        String password = generateRandomPassword(10);
         employe.setUsername(username);
-        employe.setPassword(password); // 🔐 À hasher dans une vraie app !
 
-        // Enregistrement en base (pour avoir l'ID)
-        Employe saved = employeRepository.save(employe);
+        // Générer mot de passe clair
+        String password = generateRandomPassword(10);
 
-        try {
-            // Lien encodé dans le QR code (ex : pour pointage)
-            String qrLink = "http://192.168.1.7:2233/scan.html?employeId=" + saved.getId();
+        // Encoder avant stockage
+        employe.setPassword(passwordEncoder.encode(password));
 
-            // Générer le QR code en image (byte array)
-            byte[] qrImageBytes = QRCodeGenerator.generateQRCodeImageAsBytes(qrLink);
+        // Email avec mot de passe clair
+        String subject = "Vos identifiants de connexion";
+        String body = "<html><body>"
+                + "<p>Bonjour " + employe.getPrenom() + ",</p>"
+                + "<p>Voici vos identifiants de connexion :</p>"
+                + "<ul>"
+                + "<li><b>Nom d'utilisateur :</b> " + username + "</li>"
+                + "<li><b>Mot de passe :</b> " + password + "</li>"
+                + "</ul>"
+                + "<p>Merci de vous connecter à la plateforme.</p>"
+                + "<br><p style='font-size:small;color:gray;'>Ceci est un message automatique, merci de ne pas répondre.</p>"
+                + "</body></html>";
 
-            // Envoi de l'e-mail avec QR intégré
-            emailService.sendEmailWithQr(
-                    saved.getEmail(),
-                    "Vos identifiants de connexion + QR Code de pointage",
-                    employe.getPrenom(),
-                    username,
-                    password,
-                    qrImageBytes
-            );
+        emailService.sendEmail(employe.getEmail(), subject, body);
 
-        } catch (Exception e) {
-            System.err.println("❌ Erreur lors de l'envoi de l'e-mail : " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        return saved;
+        // Sauvegarde
+        return employeRepository.save(employe);
     }
 
     public List<Employe> findAll() {
