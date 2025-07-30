@@ -15,7 +15,7 @@ public class JwtUtil {
     private final long EXPIRATION_TIME = 86400000; // 1 jour
 
     public JwtUtil() {
-        // Clé longue et sécurisée (ou fournie dans config)
+        // Clé longue et sécurisée (au moins 32 caractères)
         String keyString = "MaCleSuperSecretePourJWTDe32CaracteresMinimale!";
         this.secretKey = Keys.hmacShaKeyFor(keyString.getBytes(StandardCharsets.UTF_8));
     }
@@ -46,5 +46,15 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+
+    // ✅ Méthode ajoutée pour extraire le rôle depuis le token
+    public String extractRole(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
     }
 }

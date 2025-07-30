@@ -33,6 +33,10 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()   // <--- Autoriser toutes requêtes OPTIONS
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/api/employes/**").hasRole("ADMIN")
+                        .requestMatchers("/api/reunions/**").hasRole("ADMIN")
+                        .requestMatchers("/venus/employes/add").hasRole("ADMIN")
+
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
