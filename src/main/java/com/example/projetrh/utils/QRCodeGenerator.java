@@ -1,3 +1,4 @@
+
 package com.example.projetrh.utils;
 
 import com.google.zxing.BarcodeFormat;

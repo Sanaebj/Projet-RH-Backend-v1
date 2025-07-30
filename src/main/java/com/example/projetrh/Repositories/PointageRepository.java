@@ -1,3 +1,4 @@
+
 package com.example.projetrh.Repositories;
 
 import com.example.projetrh.Entities.Employe;
@@ -13,4 +14,3 @@ public interface PointageRepository extends JpaRepository<Pointage, Long> {
 
     List<Pointage> findByDate(LocalDate date);
 }
-
