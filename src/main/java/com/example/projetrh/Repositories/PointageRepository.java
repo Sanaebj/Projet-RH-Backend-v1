@@ -13,4 +13,3 @@ public interface PointageRepository extends JpaRepository<Pointage, Long> {
 
     List<Pointage> findByDate(LocalDate date);
 }
-
