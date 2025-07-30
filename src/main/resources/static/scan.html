@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pointage</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      flex-direction: column;
+      margin: 0;
+    }
+
+    .loading {
+      font-size: 1.5rem;
+      color: #555;
+    }
+
+    .result {
+      font-size: 1.4rem;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 80%;
+      text-align: center;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .success {
+      background-color: #e6ffed;
+      color: #1b5e20;
+      border: 1px solid #a5d6a7;
+    }
+
+    .error {
+      background-color: #ffebee;
+      color: #b71c1c;
+      border: 1px solid #ef9a9a;
+    }
+
+    .spinner {
+      margin-top: 10px;
+      width: 30px;
+      height: 30px;
+      border: 4px solid #ccc;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<div class="loading">
+  ⏳ Enregistrement du pointage...
+  <div class="spinner"></div>
+</div>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const employeId = params.get("employeId");
+
+  fetch(`http://${window.location.hostname}:2233/api/pointage/scan?employeId=${employeId}`, {
+    method: 'POST'
+  })
+          .then(res => res.text())
+          .then(data => {
+            document.body.innerHTML = `<div class="result success">${data}</div>`;
+          })
+          .catch(err => {
+            document.body.innerHTML = `<div class="result error">❌ Erreur : ${err.message}</div>`;
+          });
+</script>
+</body>
+</html>
