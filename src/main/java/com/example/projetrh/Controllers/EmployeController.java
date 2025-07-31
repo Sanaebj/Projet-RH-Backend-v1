@@ -74,6 +74,18 @@ public class EmployeController {
         long count = employeService.countAllEmployes();
         return ResponseEntity.ok(count);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateEmployee(@PathVariable Integer id, @RequestBody Employe employeDetails) {
+        try {
+            Employe updatedEmploye = employeService.update(id, employeDetails);
+            if (updatedEmploye == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(updatedEmploye);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Erreur lors de la mise à jour de l'employé: " + e.getMessage());
+        }
+    }
 
 
 }

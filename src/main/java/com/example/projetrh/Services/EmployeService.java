@@ -97,4 +97,28 @@ public class EmployeService {
         }
         return sb.toString();
     }
+    public Employe update(Integer id, Employe employeDetails) {
+        return employeRepository.findById(id).map(existingEmploye -> {
+            // Mise à jour des champs souhaités
+            existingEmploye.setNom(employeDetails.getNom());
+            existingEmploye.setPrenom(employeDetails.getPrenom());
+            existingEmploye.setEmail(employeDetails.getEmail());
+            existingEmploye.setTelephone(employeDetails.getTelephone());
+            existingEmploye.setAdresse(employeDetails.getAdresse());
+            existingEmploye.setPhoto(employeDetails.getPhoto());
+            existingEmploye.setMatricule(employeDetails.getMatricule());
+            existingEmploye.setService(employeDetails.getService());
+            existingEmploye.setPoste(employeDetails.getPoste());
+            existingEmploye.setSalaire(employeDetails.getSalaire());
+            existingEmploye.setGenre(employeDetails.getGenre());
+            existingEmploye.setDateEmbauche(employeDetails.getDateEmbauche());
+            existingEmploye.setCin(employeDetails.getCin());
+
+            // Pour username et password, on peut décider de ne pas modifier lors de l’update
+            // Ou ajouter la logique ici si besoin
+
+            return employeRepository.save(existingEmploye);
+        }).orElse(null);
+    }
+
 }
