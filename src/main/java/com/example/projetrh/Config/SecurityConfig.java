@@ -34,7 +34,13 @@ public class SecurityConfig {
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/api/employes/**").hasRole("ADMIN")
                         .requestMatchers("/api/reunions/**").hasRole("ADMIN")
+                        .requestMatchers("/api/reunions").hasRole("ADMIN")
+
                         .requestMatchers("/venus/employes/add").hasRole("ADMIN")
+                        .requestMatchers("/api/demandes-documents/non-vues").hasRole("ADMIN")
+                        .requestMatchers("/api/employes/count").hasRole("ADMIN")
+
+
 
 
                         .anyRequest().authenticated()

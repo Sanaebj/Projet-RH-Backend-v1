@@ -3,9 +3,9 @@ package com.example.projetrh.Services;
 import com.example.projetrh.Entities.Employe;
 import com.example.projetrh.Repositories.EmployeRepository;
 import com.example.projetrh.utils.QRCodeGenerator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Random;
 
@@ -14,10 +14,14 @@ public class EmployeService {
 
     private final EmployeRepository employeRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
-    public EmployeService(EmployeRepository employeRepository, EmailService emailService) {
+    public EmployeService(EmployeRepository employeRepository,
+                          EmailService emailService,
+                          PasswordEncoder passwordEncoder) {
         this.employeRepository = employeRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Employe save(Employe employe) {
@@ -31,34 +35,37 @@ public class EmployeService {
         // Générer le username
         String username = employe.getPrenom().substring(0, 1).toLowerCase()
                 + "." + employe.getNom().toLowerCase() + "@apprh.ma";
-
-        // Générer un mot de passe aléatoire
-        String password = generateRandomPassword(10);
         employe.setUsername(username);
-        employe.setPassword(password); // 🔐 À hasher dans une vraie app !
 
-        // Enregistrement en base (pour avoir l'ID)
+        // Générer un mot de passe aléatoire (en clair pour l'e-mail)
+        String plainPassword = generateRandomPassword(10);
+
+        // Hasher le mot de passe avant enregistrement
+        String hashedPassword = passwordEncoder.encode(plainPassword);
+        employe.setPassword(hashedPassword);
+
+        // Enregistrer pour obtenir l’ID
         Employe saved = employeRepository.save(employe);
 
         try {
-            // Lien encodé dans le QR code (ex : pour pointage)
+            // Générer un lien de pointage avec ID
             String qrLink = "http://192.168.1.7:2233/scan.html?employeId=" + saved.getId();
 
-            // Générer le QR code en image (byte array)
+            // Générer le QR Code (image PNG en byte[])
             byte[] qrImageBytes = QRCodeGenerator.generateQRCodeImageAsBytes(qrLink);
 
-            // Envoi de l'e-mail avec QR intégré
+            // Envoyer l’e-mail avec QR Code intégré dans le corps
             emailService.sendEmailWithQr(
                     saved.getEmail(),
                     "Vos identifiants de connexion + QR Code de pointage",
                     employe.getPrenom(),
                     username,
-                    password,
+                    plainPassword,
                     qrImageBytes
             );
 
         } catch (Exception e) {
-            System.err.println("❌ Erreur lors de l'envoi de l'e-mail : " + e.getMessage());
+            System.err.println("❌ Erreur lors de l’envoi de l’e-mail : " + e.getMessage());
             e.printStackTrace();
         }
 
