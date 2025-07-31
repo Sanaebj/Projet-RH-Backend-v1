@@ -44,10 +44,4 @@ public class ReunionController {
     public void delete(@PathVariable Integer id) {
         reunionService.delete(id);
     }
-    @GetMapping("/upcoming")
-    public List<Reunion> getUpcomingReunions() {
-        LocalDateTime now = LocalDateTime.now();
-        return reunionRepository.findByDateHeureAfterOrderByDateHeureAsc(now);
-    }
-
-}
+  }
