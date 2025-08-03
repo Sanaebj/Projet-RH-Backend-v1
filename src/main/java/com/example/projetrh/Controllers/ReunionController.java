@@ -5,6 +5,7 @@ import com.example.projetrh.Entities.Reunion;
 import com.example.projetrh.Repositories.ReunionRepository;
 import com.example.projetrh.Services.ReunionService;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,7 @@ public class ReunionController {
     public Reunion createReunion(@Valid @RequestBody ReunionRequestDTO dto) {
         return reunionService.createReunionWithParticipants(dto);
     }
-
+    @PreAuthorize("hasRole('ADMIN')") // ou autre rôle
     @GetMapping
     public List<Reunion> getAll() {
         return reunionService.findAll();

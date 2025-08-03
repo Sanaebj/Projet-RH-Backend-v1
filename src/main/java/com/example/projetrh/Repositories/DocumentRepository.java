@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface DocumentRepository extends JpaRepository<Document, Integer> {
     List<Document> findByEmployeId(Integer employeId);
+
 }

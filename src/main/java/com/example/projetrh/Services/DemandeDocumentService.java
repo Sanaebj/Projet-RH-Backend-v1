@@ -41,4 +41,11 @@ public class DemandeDocumentService {
         return repository.findByVuParAdminFalse();
     }
 
+    public long countAll() {
+        return repository.count();
+    }
+
+    public long countByDocumentPretFalse() {
+        return repository.countByDocumentPretFalse();
+    }
 }
