@@ -32,4 +32,5 @@ public class AuthService {
         }
         throw new RuntimeException("Invalid credentials");
     }
+
 }
