@@ -48,6 +48,9 @@ public class Employe extends Utilisateur {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDate dateCreation;
+    @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ParticipationReunion> participations;
+
 
 }
 

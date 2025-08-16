@@ -1,7 +1,6 @@
 package com.example.projetrh.Dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -10,20 +9,17 @@ import java.util.List;
 
 @Data
 public class ReunionRequestDTO {
-
-    @NotBlank(message = "Le titre est obligatoire")
+    @NotBlank
     private String titre;
 
-    @NotNull(message = "La date et l'heure sont obligatoires")
+    @NotNull
     private LocalDateTime dateHeure;
 
-    @NotBlank(message = "Le lieu est obligatoire")
+    @NotBlank
     private String lieu;
 
     private String description;
 
-    @NotEmpty(message = "La liste des participants est obligatoire")
-    private List<String> employeNomsComplet;
-
-
+    // ⚡ maintenant une liste d'IDs d'employés
+    private List<Integer> participantIds;
 }

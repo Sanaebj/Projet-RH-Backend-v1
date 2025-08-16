@@ -49,25 +49,18 @@ public class ReunionService {
 
         Reunion saved = reunionRepository.save(reunion);
 
-        // Ajouter les participants à partir des noms complets
-        for (String fullName : dto.getEmployeNomsComplet()) {
-            String[] parts = fullName.trim().split(" ");
-            if (parts.length >= 2) {
-                String prenom = parts[0];
-                String nom = parts[1];
-
-                // Chercher les employés par nom et prénom
-                List<Employe> matches = employeRepository.findByNomAndPrenom(nom, prenom);
-                for (Employe employe : matches) {
-                    ParticipationReunion participation = new ParticipationReunion();
-                    participation.setReunion(saved);
-                    participation.setEmploye(employe);
-                    participation.setStatut(StatutParticipation.EN_ATTENTE);
-                    participationReunionRepository.save(participation);
-                }
-            }
+        // Associer les participants via leurs IDs
+        for (Integer empId : dto.getParticipantIds()) {
+            employeRepository.findById(empId).ifPresent(employe -> {
+                ParticipationReunion participation = new ParticipationReunion();
+                participation.setReunion(saved);
+                participation.setEmploye(employe);
+                participation.setStatut(StatutParticipation.EN_ATTENTE);
+                participationReunionRepository.save(participation);
+            });
         }
 
         return saved;
     }
+
 }
