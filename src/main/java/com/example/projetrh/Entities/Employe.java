@@ -38,6 +38,7 @@ public class Employe extends Utilisateur {
     private List<Conge> conges;
 
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Document> documents;
 
     @PrePersist

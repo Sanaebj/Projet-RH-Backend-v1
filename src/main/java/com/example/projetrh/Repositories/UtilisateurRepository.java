@@ -4,7 +4,8 @@ import com.example.projetrh.Entities.Utilisateur;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
-public interface UtilisateurRepository extends JpaRepository<Utilisateur, Integer> {
-    Optional<Utilisateur> findByUsername(String username);
+public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
     boolean existsByUsername(String username);
+    Optional<Utilisateur> findByUsername(String username);
+
 }

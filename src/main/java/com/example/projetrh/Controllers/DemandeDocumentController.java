@@ -67,5 +67,11 @@ public class DemandeDocumentController {
         List<DemandeDocument> nonVues = service.findByVuParAdminFalse();
         return ResponseEntity.ok(nonVues);
     }
+    @GetMapping("/count")
+    public ResponseEntity<Long> countAll() {
+        long count = service.countAll();
+        return ResponseEntity.ok(count);
+    }
+
 
 }

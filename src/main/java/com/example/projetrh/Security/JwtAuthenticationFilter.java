@@ -14,6 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -33,10 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // Exclure certaines URLs de la vérification JWT (ex: login, inscription...)
+        // Exclure certaines URLs de la vérification JWT (ex: login, inscription)
         if (path.startsWith("/auth/")) {
             filterChain.doFilter(request, response);
-            return; // on sort pour ne pas faire la vérif JWT ici
+            return;
         }
 
         String authHeader = request.getHeader("Authorization");
@@ -46,9 +47,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             if (jwtUtil.validateToken(token)) {
                 String username = jwtUtil.extractUsername(token);
-                Utilisateur user = utilisateurRepository.findByUsername(username).orElse(null);
 
-                if (user != null) {
+                // Ici on utilise Optional correctement
+                Optional<Utilisateur> optionalUser = utilisateurRepository.findByUsername(username);
+                if (optionalUser.isPresent()) {
+                    Utilisateur user = optionalUser.get();
+
                     List<SimpleGrantedAuthority> authorities = List.of(
                             new SimpleGrantedAuthority("ROLE_" + user.getRole().name())
                     );
@@ -63,5 +67,4 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
 }

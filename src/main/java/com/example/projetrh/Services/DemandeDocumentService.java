@@ -40,5 +40,8 @@ public class DemandeDocumentService {
     public List<DemandeDocument> findByVuParAdminFalse() {
         return repository.findByVuParAdminFalse();
     }
+    public long countAll() {
+        return repository.count();
+    }
 
 }
