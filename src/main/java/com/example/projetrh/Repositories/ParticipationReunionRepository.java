@@ -11,5 +11,6 @@ import java.util.List;
 public interface ParticipationReunionRepository extends JpaRepository<ParticipationReunion, Integer> {
     List<ParticipationReunion> findByEmployeId(Integer employeId);
     List<ParticipationReunion> findByReunionId(Integer reunionId);
+    List<ParticipationReunion> findByReunion(Reunion reunion);
 
 }

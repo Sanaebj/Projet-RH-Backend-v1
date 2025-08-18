@@ -81,7 +81,19 @@ public class EmployeService {
     }
 
     public void delete(Integer id) {
-        employeRepository.deleteById(id);
+        try {
+            Employe employe = employeRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
+
+            if (employe.getParticipations() != null) employe.getParticipations().clear();
+            if (employe.getConges() != null) employe.getConges().clear();
+            if (employe.getDocuments() != null) employe.getDocuments().clear();
+            if (employe.getDemandeDocuments() != null) employe.getDemandeDocuments().clear();
+
+            employeRepository.delete(employe);
+        } catch (Exception e) {
+            throw new RuntimeException("Impossible de supprimer cet employé : " + e.getMessage());
+        }
     }
 
     public long countAllEmployes() {

@@ -1,5 +1,6 @@
 package com.example.projetrh.Entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,7 +27,7 @@ public class Reunion {
 
     private String description;
 
-    // ⚡ Relation avec ParticipationReunion
     @OneToMany(mappedBy = "reunion", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // parent
     private List<ParticipationReunion> participations;
 }

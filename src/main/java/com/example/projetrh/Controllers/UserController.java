@@ -1,6 +1,7 @@
 package com.example.projetrh.Controllers;
 
 import com.example.projetrh.Dtos.EmployeDTO;
+import com.example.projetrh.Dtos.UpdateUserDTO;
 import com.example.projetrh.Entities.Employe;
 import com.example.projetrh.Entities.Utilisateur;
 import com.example.projetrh.Repositories.AdminRepository;
@@ -29,6 +30,35 @@ public class UserController {
             return ResponseEntity.status(401).build();
         }
         Utilisateur user = (Utilisateur) authentication.getPrincipal();
+        return ResponseEntity.ok(user);
+    }
+    @PutMapping("/me")
+    public ResponseEntity<Utilisateur> updateCurrentUser(
+            Authentication authentication,
+            @RequestBody UpdateUserDTO updateUserDTO
+    ) {
+        if (authentication == null || !(authentication.getPrincipal() instanceof Utilisateur)) {
+            return ResponseEntity.status(401).build();
+        }
+
+        Utilisateur user = (Utilisateur) authentication.getPrincipal();
+
+        // Mise à jour des champs
+        user.setNom(updateUserDTO.getNom());
+        user.setPrenom(updateUserDTO.getPrenom());
+        user.setEmail(updateUserDTO.getEmail());
+        user.setTelephone(updateUserDTO.getTelephone());
+        user.setAdresse(updateUserDTO.getAdresse());
+
+        // ⚠️ Gérer le mot de passe avec encodage si nécessaire
+        if (updateUserDTO.getPassword() != null && !updateUserDTO.getPassword().isEmpty()) {
+            // exemple si tu as un PasswordEncoder
+            // user.setMotDePasse(passwordEncoder.encode(updateUserDTO.getMotDePasse()));
+            user.setPassword(updateUserDTO.getPassword());
+        }
+
+        utilisateurRepository.save(user);
+
         return ResponseEntity.ok(user);
     }
 

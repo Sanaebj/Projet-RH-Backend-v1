@@ -64,11 +64,13 @@ public class EmployeController {
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         try {
             employeService.delete(id);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("Employé supprimé avec succès");
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Erreur lors de la suppression de l'employé");
+            // Affiche le vrai message de l'erreur
+            return ResponseEntity.status(500).body("Erreur lors de la suppression de l'employé : " + e.getMessage());
         }
     }
+
     @GetMapping("/count")
     public ResponseEntity<Long> countEmployes() {
         long count = employeService.countAllEmployes();

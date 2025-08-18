@@ -3,6 +3,7 @@ package com.example.projetrh.Entities;
 import com.example.projetrh.Enums.Genre;
 import com.example.projetrh.Enums.StatutEmploye;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,9 +50,15 @@ public class Employe extends Utilisateur {
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDate dateCreation;
+
+
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference // parent
     private List<ParticipationReunion> participations;
 
+    @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<DemandeDocument> demandeDocuments;
 
 }
 

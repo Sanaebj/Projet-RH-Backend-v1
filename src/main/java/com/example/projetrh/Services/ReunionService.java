@@ -1,7 +1,7 @@
 package com.example.projetrh.Services;
 
 import com.example.projetrh.Dtos.ReunionRequestDTO;
-import com.example.projetrh.Entities.Employe;
+import com.example.projetrh.Dtos.ReunionResponseDTO;
 import com.example.projetrh.Entities.ParticipationReunion;
 import com.example.projetrh.Entities.Reunion;
 import com.example.projetrh.Enums.StatutParticipation;
@@ -11,6 +11,7 @@ import com.example.projetrh.Repositories.ReunionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReunionService {
@@ -39,7 +40,7 @@ public class ReunionService {
         reunionRepository.deleteById(id);
     }
 
-    public Reunion createReunionWithParticipants(ReunionRequestDTO dto) {
+    public ReunionResponseDTO createReunionWithParticipantsDTO(ReunionRequestDTO dto) {
         // Créer la réunion
         Reunion reunion = new Reunion();
         reunion.setTitre(dto.getTitre());
@@ -47,20 +48,59 @@ public class ReunionService {
         reunion.setLieu(dto.getLieu());
         reunion.setDescription(dto.getDescription());
 
-        Reunion saved = reunionRepository.save(reunion);
+        Reunion savedReunion = reunionRepository.save(reunion);
 
-        // Associer les participants via leurs IDs
-        for (Integer empId : dto.getParticipantIds()) {
-            employeRepository.findById(empId).ifPresent(employe -> {
-                ParticipationReunion participation = new ParticipationReunion();
-                participation.setReunion(saved);
-                participation.setEmploye(employe);
-                participation.setStatut(StatutParticipation.EN_ATTENTE);
-                participationReunionRepository.save(participation);
-            });
-        }
+        // Créer les participations et les sauvegarder
+        List<ReunionResponseDTO.ParticipationDTO> participationDTOs = dto.getParticipantIds().stream()
+                .map(empId -> employeRepository.findById(empId).map(employe -> {
+                    ParticipationReunion participation = new ParticipationReunion();
+                    participation.setReunion(savedReunion);
+                    participation.setEmploye(employe);
+                    participation.setStatut(StatutParticipation.EN_ATTENTE);
+                    participationReunionRepository.save(participation);
 
-        return saved;
+                    // Créer directement le DTO correspondant
+                    ReunionResponseDTO.ParticipationDTO pdto = new ReunionResponseDTO.ParticipationDTO();
+                    pdto.setEmployeId(employe.getId());
+                    pdto.setNomComplet(employe.getNom() + " " + employe.getPrenom());
+                    return pdto;
+                }).orElse(null))
+                .filter(pdto -> pdto != null)
+                .toList();
+
+        // Construire le DTO final
+        ReunionResponseDTO response = new ReunionResponseDTO();
+        response.setId(savedReunion.getId());
+        response.setTitre(savedReunion.getTitre());
+        response.setDateHeure(savedReunion.getDateHeure());
+        response.setLieu(savedReunion.getLieu());
+        response.setDescription(savedReunion.getDescription());
+        response.setParticipations(participationDTOs);
+
+        return response;
+    }
+    public List<ReunionResponseDTO> findAllDTO() {
+        return reunionRepository.findAll().stream().map(reunion -> {
+            ReunionResponseDTO dto = new ReunionResponseDTO();
+            dto.setId(reunion.getId());
+            dto.setTitre(reunion.getTitre());
+            dto.setDateHeure(reunion.getDateHeure());
+            dto.setLieu(reunion.getLieu());
+            dto.setDescription(reunion.getDescription());
+
+            List<ReunionResponseDTO.ParticipationDTO> participants =
+                    participationReunionRepository.findByReunion(reunion).stream()
+                            .map(part -> {
+                                ReunionResponseDTO.ParticipationDTO pdto = new ReunionResponseDTO.ParticipationDTO();
+                                pdto.setEmployeId(part.getEmploye().getId());
+                                pdto.setNomComplet(part.getEmploye().getNom() + " " + part.getEmploye().getPrenom());
+                                return pdto;
+                            })
+                            .toList();
+
+            dto.setParticipations(participants);
+            return dto;
+        }).toList();
     }
 
 }

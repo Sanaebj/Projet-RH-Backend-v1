@@ -1,6 +1,7 @@
 package com.example.projetrh.Controllers;
 
 import com.example.projetrh.Dtos.ReunionRequestDTO;
+import com.example.projetrh.Dtos.ReunionResponseDTO;
 import com.example.projetrh.Entities.Reunion;
 import com.example.projetrh.Repositories.ReunionRepository;
 import com.example.projetrh.Services.ReunionService;
@@ -26,14 +27,15 @@ public class ReunionController {
 
 
     @PostMapping
-    public Reunion createReunion(@Valid @RequestBody ReunionRequestDTO dto) {
-        return reunionService.createReunionWithParticipants(dto);
+    public ReunionResponseDTO createReunion(@Valid @RequestBody ReunionRequestDTO dto) {
+        return reunionService.createReunionWithParticipantsDTO(dto);
     }
 
     @GetMapping
-    public List<Reunion> getAll() {
-        return reunionService.findAll();
+    public List<ReunionResponseDTO> getAll() {
+        return reunionService.findAllDTO();
     }
+
 
     @GetMapping("/{id}")
     public Reunion getById(@PathVariable Integer id) {
