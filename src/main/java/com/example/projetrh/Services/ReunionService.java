@@ -10,6 +10,7 @@ import com.example.projetrh.Repositories.ParticipationReunionRepository;
 import com.example.projetrh.Repositories.ReunionRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -102,5 +103,32 @@ public class ReunionService {
             return dto;
         }).toList();
     }
+    public List<ReunionResponseDTO> findUpcomingReunionsDTO() {
+        return reunionRepository.findByDateHeureAfterOrderByDateHeureAsc(LocalDateTime.now())
+                .stream()
+                .map(reunion -> {  // 👈 Plus besoin de "Object"
+                    ReunionResponseDTO dto = new ReunionResponseDTO();
+                    dto.setId(reunion.getId());
+                    dto.setTitre(reunion.getTitre());
+                    dto.setDateHeure(reunion.getDateHeure());
+                    dto.setLieu(reunion.getLieu());
+                    dto.setDescription(reunion.getDescription());
+
+                    List<ReunionResponseDTO.ParticipationDTO> participants =
+                            participationReunionRepository.findByReunion(reunion).stream()
+                                    .map(part -> {
+                                        ReunionResponseDTO.ParticipationDTO pdto = new ReunionResponseDTO.ParticipationDTO();
+                                        pdto.setEmployeId(part.getEmploye().getId());
+                                        pdto.setNomComplet(part.getEmploye().getNom() + " " + part.getEmploye().getPrenom());
+                                        return pdto;
+                                    })
+                                    .toList();
+
+                    dto.setParticipations(participants);
+                    return dto;
+                })
+                .toList();
+    }
+
 
 }
