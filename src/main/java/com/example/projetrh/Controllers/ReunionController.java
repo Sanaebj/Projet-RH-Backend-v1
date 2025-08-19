@@ -46,4 +46,9 @@ public class ReunionController {
     public void delete(@PathVariable Integer id) {
         reunionService.delete(id);
     }
-  }
+    @GetMapping("/upcoming")
+    public List<ReunionResponseDTO> getUpcomingReunions() {
+        return reunionService.findUpcomingReunionsDTO();
+    }
+
+}
