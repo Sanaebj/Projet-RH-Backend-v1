@@ -35,10 +35,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // Exclure certaines URLs de la vérification JWT (ex: login, inscription)
-        if (path.startsWith("/auth/")) {
+        if (path.startsWith("/auth/") ||
+                path.startsWith("/api/pointage/scan") ||
+                path.startsWith("/api/pointage/jour")) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         String authHeader = request.getHeader("Authorization");
 
@@ -48,7 +51,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (jwtUtil.validateToken(token)) {
                 String username = jwtUtil.extractUsername(token);
 
-                // Ici on utilise Optional correctement
                 Optional<Utilisateur> optionalUser = utilisateurRepository.findByUsername(username);
                 if (optionalUser.isPresent()) {
                     Utilisateur user = optionalUser.get();

@@ -41,6 +41,8 @@ public class SecurityConfig {
                         .requestMatchers("/venus/employes/add").hasRole("ADMIN")
                         .requestMatchers("/api/demandes-documents/non-vues").hasRole("ADMIN")
                         .requestMatchers("/api/employes/count").hasRole("ADMIN")
+                        .requestMatchers("/api/pointage/scan/**").permitAll()   // libre, pas besoin de rôle
+                        .requestMatchers("/api/pointage/jour/**").permitAll()
                         .requestMatchers("/api/demandes-documents/count/en-cours").hasRole("ADMIN")
                         .requestMatchers("/api/documents/demande-attestation/**").hasRole("ADMIN")
 
@@ -60,8 +62,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3001")); // <-- Ajout 3001
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedOrigins(List.of(
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "http://192.168.1.7:3000",
+                "http://192.168.1.7:3001"
+        ));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 

@@ -18,13 +18,14 @@
     .loading {
       font-size: 1.5rem;
       color: #555;
+      text-align: center;
     }
 
     .result {
       font-size: 1.4rem;
       padding: 20px;
       border-radius: 10px;
-      max-width: 80%;
+      max-width: 90%;
       text-align: center;
       line-height: 1.6;
       white-space: pre-line;
@@ -58,24 +59,33 @@
   </style>
 </head>
 <body>
-<div class="loading">
-  ⏳ Enregistrement du pointage...
+<div class="loading" id="status">
+  ⏳ Connexion au serveur...
   <div class="spinner"></div>
 </div>
 
 <script>
   const params = new URLSearchParams(window.location.search);
   const employeId = params.get("employeId");
+  const statusDiv = document.getElementById("status");
 
-  fetch(`http://${window.location.hostname}:2233/api/pointage/scan?employeId=${employeId}`, {
-    method: 'POST'
-  })
-          .then(res => res.text())
+  const url = `http://${window.location.hostname}:2233/api/pointage/scan?employeId=${employeId}`;
+  console.log("URL utilisée :", url);
+  statusDiv.innerHTML = `⏳ Enregistrement du pointage pour employé <b>${employeId}</b>...<div class="spinner"></div>`;
+
+  fetch(url, { method: 'POST' })
+          .then(res => {
+            if (!res.ok) {
+              throw new Error("Réponse HTTP " + res.status);
+            }
+            return res.text();
+          })
           .then(data => {
             document.body.innerHTML = `<div class="result success">${data}</div>`;
           })
           .catch(err => {
-            document.body.innerHTML = `<div class="result error">❌ Erreur : ${err.message}</div>`;
+            document.body.innerHTML = `<div class="result error">❌ Erreur réseau ou serveur : ${err.message}</div>`;
+            console.error("Erreur fetch :", err);
           });
 </script>
 </body>
