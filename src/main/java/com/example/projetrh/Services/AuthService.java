@@ -28,7 +28,8 @@ public class AuthService {
         Utilisateur user = utilisateurRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         if (passwordEncoder.matches(password, user.getPassword())) {
-            return jwtUtil.generateToken(user.getUsername(), user.getRole().name());
+            return jwtUtil.generateToken(user.getUsername(), user.getRole().name(), Long.valueOf(user.getId()));
+
         }
         throw new RuntimeException("Invalid credentials");
     }

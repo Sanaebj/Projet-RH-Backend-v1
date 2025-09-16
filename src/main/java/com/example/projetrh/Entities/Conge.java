@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Data
@@ -30,5 +31,8 @@ public class Conge {
     @ManyToOne
     @JoinColumn(name = "employe_id")
     private Employe employe;
+
+
+
 }
 

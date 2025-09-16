@@ -43,6 +43,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/employes/count").hasRole("ADMIN")
                         .requestMatchers("/api/demandes-documents/count/en-cours").hasRole("ADMIN")
                         .requestMatchers("/api/documents/demande-attestation/**").hasRole("ADMIN")
+                        .requestMatchers("/api/conges/**").hasAuthority("EMPLOYE")
+
+
+
+
 
 
 

@@ -1,7 +1,4 @@
 package com.example.projetrh.Services;
-
-
-
 import com.example.projetrh.Entities.Conge;
 import com.example.projetrh.Entities.Employe;
 import com.example.projetrh.Enums.StatutConge;
@@ -10,6 +7,7 @@ import com.example.projetrh.Repositories.EmployeRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -75,4 +73,28 @@ public class CongeService {
     public List<Conge> listerCongesEnAttente() {
         return congeRepository.findByStatut(StatutConge.EN_ATTENTE);
     }
+
+
+    public int calculerSoldeConge(Integer employeId) {
+        int droitAnnuel = 30; // exemple
+        List<Conge> conges = congeRepository.findByEmployeId(employeId);
+
+        System.out.println("Calcul solde pour employeId=" + employeId);
+        System.out.println("Congés récupérés : " + conges);
+
+        int joursPris = conges.stream()
+                .filter(conge -> conge.getStatut() == StatutConge.APPROUVE)
+                .mapToInt(conge -> {
+                    long days = ChronoUnit.DAYS.between(conge.getDateDebut(), conge.getDateFin()) + 1;
+                    System.out.println("Congé ID=" + conge.getId() + " jours pris=" + days);
+                    return (int) days;
+                })
+                .sum();
+
+        int solde = droitAnnuel - joursPris;
+        System.out.println("Jours pris total : " + joursPris + ", solde = " + solde);
+        return solde;
+    }
+
+
 }

@@ -34,7 +34,7 @@ public class Employe extends Utilisateur {
     @Column(nullable = false, unique = true)
     private String cin;
 
-    @OneToMany(mappedBy = "employe")
+    @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore // pour éviter la boucle infinie du resultat
     private List<Conge> conges;
 
