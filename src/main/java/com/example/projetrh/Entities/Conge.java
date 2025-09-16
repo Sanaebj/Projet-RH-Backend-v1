@@ -32,7 +32,5 @@ public class Conge {
     @JoinColumn(name = "employe_id")
     private Employe employe;
 
-
-
 }
 

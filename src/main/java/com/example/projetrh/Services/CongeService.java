@@ -76,25 +76,21 @@ public class CongeService {
 
 
     public int calculerSoldeConge(Integer employeId) {
-        int droitAnnuel = 30; // exemple
-        List<Conge> conges = congeRepository.findByEmployeId(employeId);
+        Employe employe = employeRepository.findById(employeId)
+                .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
 
-        System.out.println("Calcul solde pour employeId=" + employeId);
-        System.out.println("Congés récupérés : " + conges);
+        int droitAnnuel = employe.getDroitAnnuel() != null ? employe.getDroitAnnuel() : 30;
+
+        List<Conge> conges = congeRepository.findByEmployeId(employeId);
 
         int joursPris = conges.stream()
                 .filter(conge -> conge.getStatut() == StatutConge.APPROUVE)
-                .mapToInt(conge -> {
-                    long days = ChronoUnit.DAYS.between(conge.getDateDebut(), conge.getDateFin()) + 1;
-                    System.out.println("Congé ID=" + conge.getId() + " jours pris=" + days);
-                    return (int) days;
-                })
+                .mapToInt(conge -> (int) ChronoUnit.DAYS.between(conge.getDateDebut(), conge.getDateFin()) + 1)
                 .sum();
 
-        int solde = droitAnnuel - joursPris;
-        System.out.println("Jours pris total : " + joursPris + ", solde = " + solde);
-        return solde;
+        return droitAnnuel - joursPris;
     }
+
 
 
 }

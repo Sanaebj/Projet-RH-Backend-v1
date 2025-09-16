@@ -31,6 +31,7 @@ public class CongeController {
         return congeService.calculerSoldeConge(employeId);
     }
 
+
     @GetMapping("/{id}")
     public Conge getById(@PathVariable Integer id) {
         return congeService.findById(id);
