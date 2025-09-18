@@ -1,5 +1,6 @@
 package com.example.projetrh.Services;
 
+import com.example.projetrh.Entities.Employe;
 import com.example.projetrh.Entities.Utilisateur;
 import com.example.projetrh.Repositories.UtilisateurRepository;
 import com.example.projetrh.Security.JwtUtil;
@@ -22,16 +23,25 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-
-
     public String login(String username, String password) {
         Utilisateur user = utilisateurRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            return jwtUtil.generateToken(user.getUsername(), user.getRole().name(), Long.valueOf(user.getId()));
 
+        if (passwordEncoder.matches(password, user.getPassword())) {
+            Integer soldeConge = null;
+
+            // ✅ Vérifier si l'utilisateur est un Employe
+            if (user instanceof Employe employe) {
+                soldeConge = employe.getSoldeConge();
+            }
+
+            return jwtUtil.generateToken(
+                    user.getUsername(),
+                    user.getRole().name(),
+                    Long.valueOf(user.getId()),
+                    soldeConge
+            );
         }
         throw new RuntimeException("Invalid credentials");
     }
-
 }

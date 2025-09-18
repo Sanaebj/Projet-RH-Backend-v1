@@ -27,4 +27,6 @@ public abstract class Utilisateur {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private Integer soldeConge = 30; // valeur par défaut (exemple)
 }

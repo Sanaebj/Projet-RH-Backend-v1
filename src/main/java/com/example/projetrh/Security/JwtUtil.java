@@ -21,11 +21,12 @@ public class JwtUtil {
         this.secretKey = Keys.hmacShaKeyFor(keyString.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username, String role , Long userId) {
+    public String generateToken(String username, String role, Long userId, Integer soldeConge) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", role)
                 .claim("userId", userId)
+                .claim("soldeConge", soldeConge) // ✅ ajout du solde de congés
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(secretKey, SignatureAlgorithm.HS256)

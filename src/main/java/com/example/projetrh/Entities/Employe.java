@@ -22,7 +22,7 @@ public class Employe extends Utilisateur {
     private String poste;
 
     @Column(columnDefinition = "INT DEFAULT 30")
-    private Integer droitAnnuel = 30;
+    private Integer soldeConge = 30;
 
     @Column(columnDefinition = "NUMERIC(12,2)")
     private BigDecimal salaire;
@@ -63,5 +63,12 @@ public class Employe extends Utilisateur {
     @JsonIgnore
     private List<DemandeDocument> demandeDocuments;
 
+    public Integer getSoldeConge() {
+        return soldeConge;
+    }
+
+    public void setSoldeConge(Integer soldeConge) {
+        this.soldeConge = soldeConge;
+    }
 }
 

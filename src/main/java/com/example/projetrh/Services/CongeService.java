@@ -79,7 +79,7 @@ public class CongeService {
         Employe employe = employeRepository.findById(employeId)
                 .orElseThrow(() -> new RuntimeException("Employé non trouvé"));
 
-        int droitAnnuel = employe.getDroitAnnuel() != null ? employe.getDroitAnnuel() : 30;
+        int droitAnnuel = employe.getSoldeConge() != null ? employe.getSoldeConge() : 30;
 
         List<Conge> conges = congeRepository.findByEmployeId(employeId);
 

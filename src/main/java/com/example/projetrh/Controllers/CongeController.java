@@ -8,6 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/conges")
+@CrossOrigin(origins = "http://localhost:5173") // <- mettre le port de ton frontend
 public class CongeController {
 
     private final CongeService congeService;
